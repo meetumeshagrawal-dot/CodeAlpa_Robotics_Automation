@@ -1,0 +1,33 @@
+digraph blk {
+  graph [rankdir=TB, fontname="Helvetica", labelloc=t, fontsize=20, fontcolor="#16365C",
+         label=<<B>SENSOR-BASED CONVEYOR AUTOMATION - SYSTEM BLOCK DIAGRAM</B>>, nodesep=0.35, ranksep=0.55, pad=0.3, bgcolor=white, newrank=true];
+  node  [fontname="Helvetica", fontsize=12, shape=box, style="filled,rounded", penwidth=2.2, margin="0.2,0.14"];
+  edge  [fontname="Helvetica", fontsize=10.5, color="#37474F", penwidth=1.7];
+  psu   [label="12 V DC supply\n(2 A)", color="#EF6C00", fillcolor="#FFF3E0"];
+  fuse  [label="Fuse F1\n2 A", color="#C62828", fillcolor="#FFEBEE"];
+  es    [label="E-stop switch\n2 NC contacts", color="#C62828", fillcolor="#FFEBEE"];
+  buck  [label="5 V buck\nconverter", color="#EF6C00", fillcolor="#FFF3E0"];
+  mcu   [label="Controller\nArduino Uno\n(PLC for industry)", color="#2E7D32", fillcolor="#E8F5E9"];
+  drv   [label="Motor driver\nMOSFET + flyback diode\n(contactor for large motors)", color="#5E35B1", fillcolor="#EDE7F6"];
+  mot   [label="Conveyor\nDC gear motor", color="#1565C0", fillcolor="#E3F2FD"];
+  s1    [label="Object sensor\n(photoelectric)", color="#00838F", fillcolor="#E0F7FA"];
+  s2    [label="Exit sensor\n(counts delivered)", color="#00838F", fillcolor="#E0F7FA"];
+  btn   [label="START / RESET\nbutton", color="#00838F", fillcolor="#E0F7FA"];
+  ind   [label="Status LEDs\n+ buzzer", color="#8E24AA", fillcolor="#F3E5F5"];
+  belt  [label="Belt + products", color="#455A64", fillcolor="#ECEFF1"];
+
+  psu -> fuse -> es [label=" 12 V"];
+  fuse -> buck [label=" 12 V"];
+  buck -> mcu [label=" 5 V"];
+  es -> drv [label=" motor power\n(hard-wired cut-off)", color="#C62828", fontcolor="#C62828"];
+  es -> mcu [label=" status (2nd contact)", style=dashed, color="#C62828", fontcolor="#C62828"];
+  mcu -> drv [label=" gate signal"];
+  drv -> mot [label=" switched power"];
+  mot -> belt [label=" drives"];
+  s1 -> mcu [label=" object present"];
+  s2 -> mcu [label=" object delivered"];
+  btn -> mcu;
+  mcu -> ind [label=" state"];
+  {rank=same; s1; s2; btn;}
+  {rank=same; mot; ind;}
+}

@@ -1,0 +1,30 @@
+digraph flow {
+  graph [rankdir=TB, fontname="Helvetica", labelloc=t, fontsize=20, fontcolor="#16365C",
+         label=<<B>CONVEYOR CONTROL FLOWCHART</B>>, nodesep=0.55, ranksep=0.42, pad=0.3, bgcolor=white];
+  node  [fontname="Helvetica", fontsize=12, style="filled,rounded", shape=box, penwidth=2, color="#2A5783", fillcolor="#EAF1F8", margin="0.18,0.10"];
+  edge  [fontname="Helvetica", fontsize=11, color="#37474F", penwidth=1.6, arrowsize=0.9];
+
+  start [label="START", shape=oval, color="#2E7D32", fillcolor="#E8F5E9"];
+  init  [label="Power on: motor OFF, outputs OFF\nstate = IDLE (red LED blinks slowly)"];
+  go    [label="START button pressed\nand E-stop healthy?", shape=diamond, style=filled, color="#EF6C00", fillcolor="#FFF3E0", margin="0.05,0.05"];
+  run   [label="RUN: motor ON, green LED on"];
+  obj   [label="Object sensor active\nfor at least 30 ms?", shape=diamond, style=filled, color="#EF6C00", fillcolor="#FFF3E0", margin="0.05,0.05"];
+  proc  [label="PROCESS: stop belt, count object\nhold 2 s (count / inspect / sort)\ngreen LED blinks"];
+  clr   [label="CLEARING: motor ON again\nwait until object leaves the beam"];
+  gone  [label="Beam clear for 300 ms\nwithin 5 s?", shape=diamond, style=filled, color="#EF6C00", fillcolor="#FFF3E0", margin="0.05,0.05"];
+  fault [label="FAULT (jam / stuck sensor)\nmotor OFF, red LED + buzzer\nwait for START to reset", color="#C62828", fillcolor="#FFEBEE"];
+  estop [label="E-STOP (any time): motor OFF at once\nrestart needs E-stop released AND START", color="#C62828", fillcolor="#FFEBEE"];
+
+  start -> init -> go;
+  go -> go [label=" NO"];
+  go -> run [label=" YES"];
+  run -> obj;
+  obj -> run [label=" NO\n (keep running)", constraint=false];
+  obj -> proc [label=" YES"];
+  proc -> clr -> gone;
+  gone -> run [label=" YES\n (resume)", constraint=false];
+  gone -> fault [label=" NO (timeout)"];
+  fault -> run [label=" START pressed,\n jam removed", style=dashed, constraint=false];
+  estop -> run [label=" START after release", style=dashed, constraint=false];
+  {rank=same; obj; estop;}
+}

@@ -1,0 +1,22 @@
+digraph st {
+  graph [rankdir=LR, fontname="Helvetica", labelloc=t, fontsize=20, fontcolor="#16365C",
+         label=<<B>CONTROLLER STATE DIAGRAM</B>>, nodesep=0.7, ranksep=0.9, pad=0.3, bgcolor=white];
+  node  [fontname="Helvetica", fontsize=12, shape=box, style="filled,rounded", penwidth=2, margin="0.2,0.12"];
+  edge  [fontname="Helvetica", fontsize=10.5, color="#37474F", penwidth=1.5];
+  IDLE     [label="IDLE\nmotor OFF", color="#546E7A", fillcolor="#ECEFF1"];
+  RUN      [label="RUN\nmotor ON", color="#2E7D32", fillcolor="#E8F5E9"];
+  PROCESS  [label="PROCESS\nmotor OFF, 2 s", color="#1565C0", fillcolor="#E3F2FD"];
+  CLEARING [label="CLEARING\nmotor ON", color="#EF6C00", fillcolor="#FFF3E0"];
+  FAULT    [label="FAULT\nmotor OFF, buzzer", color="#C62828", fillcolor="#FFEBEE"];
+  ESTOP    [label="ESTOP\nmotor OFF", color="#C62828", fillcolor="#FFEBEE"];
+  IDLE -> RUN [label="START pressed,\nE-stop healthy"];
+  RUN -> PROCESS [label="object sensor\nactive 30 ms\n(count + 1)"];
+  PROCESS -> CLEARING [label="2 s elapsed"];
+  CLEARING -> RUN [label="beam clear\n300 ms"];
+  CLEARING -> FAULT [label="not clear\nafter 5 s"];
+  FAULT -> RUN [label="START\n(no object held)"];
+  FAULT -> CLEARING [label="START\n(object held)", constraint=false];
+  ESTOP -> RUN [label="released + START\n(no object held)"];
+  ESTOP -> CLEARING [label="released + START\n(object held)", constraint=false];
+  IDLE -> ESTOP [label="E-stop open\n(any state)", style=dashed, color="#C62828", fontcolor="#C62828"];
+}

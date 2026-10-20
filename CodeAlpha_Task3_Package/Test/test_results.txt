@@ -1,0 +1,28 @@
+Scenario 1: power-up, START, three objects, normal operation
+  [PASS] motor OFF and state IDLE after power-up (no auto-start)
+  [PASS] START press -> RUN, motor ON
+  [PASS] belt stopped with object 1 at the sensor (leading edge 500-510 mm)
+  [PASS] dwell time was 2.00 s
+  [PASS] 3 objects counted at the station
+  [PASS] 3 objects counted at the exit sensor
+  [PASS] ends in RUN, no fault
+Scenario 2: sensor noise (10 ms glitches) while belt is empty
+  [PASS] no false detection from 10 ms glitches
+  [PASS] a sustained signal (60 ms) IS accepted as an object
+Scenario 3: emergency stop (a broken E-stop wire reads the same as a pressed button)
+  [PASS] motor OFF within 1 ms of E-stop (no debounce delay)
+  [PASS] releasing E-stop alone does NOT restart
+  [PASS] START after release restarts
+  [PASS] START pressed while E-stop is held is ignored
+  [PASS] E-stop during PROCESS -> ESTOP
+  [PASS] releasing E-stop in PROCESS does not restart by itself
+  [PASS] START restarts into CLEARING (object still in beam)
+  [PASS] object moved out, back to RUN, and NOT counted twice
+Scenario 4: jam / stuck sensor
+  [PASS] stuck-active sensor is treated as an object
+  [PASS] jam detected: FAULT after dwell + 5 s timeout, motor OFF
+  [PASS] buzzer pulses (both on and off) while in FAULT
+  [PASS] after the jam is removed, START resets (CLEARING)
+  [PASS] then RUN, object count still 1
+
+22/22 checks passed
